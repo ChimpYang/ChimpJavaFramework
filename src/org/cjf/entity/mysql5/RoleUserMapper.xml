@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cjf.entity.mysql5.RoleUserMapper">
+
+	<sql id="criteriaSqlUserInRole">
+		from CJF_ROLE_USER ru
+		inner join CJF_USER u
+		on ru.userCode=u.userCode
+		where ru.roleCode=#{roleCode}
+		and u.userCode like '%${userCode}%'
+		and u.userName like '%${userName}%'
+	</sql>
+	
+	<select id="countListUserInRole" parameterType="RoleUser" resultType="int">
+		select count(ru.id) 
+		<include refid="criteriaSqlUserInRole" />
+	</select>
+
+	<select id="listUserInRole" parameterType="RoleUser" resultType="RoleUser">
+		select ru.id, ru.userCode, u.userName, ru.roleCode, '' roleName 
+		<include refid="criteriaSqlUserInRole" />
+	</select>
+	
+	<sql id="criteriaSqlUserNotInRole">
+		from CJF_USER u
+		where u.userCode not in
+		(
+			select ru.userCode from CJF_ROLE_USER ru where ru.roleCode=#{roleCode}
+		)
+		and u.userCode like '%${userCode}%'
+		and u.userName like '%${userName}%'
+	</sql>
+	
+	<select id="countListUserNotInRole" parameterType="RoleUser" resultType="int">
+		select count(u.id)
+		<include refid="criteriaSqlUserNotInRole" />
+	</select>
+	
+	<select id="listUserNotInRole" parameterType="RoleUser" resultType="RoleUser">
+		select u.id, u.userName, u.userCode, #{roleCode} roleCode, '' roleName 
+		<include refid="criteriaSqlUserNotInRole" />
+	</select>
+	
+	<insert id="add" parameterType="RoleUser" useGeneratedKeys="true" keyProperty="id">
+		insert into CJF_ROLE_USER 
+		(roleCode, userCode)
+		values 
+		(#{roleCode}, #{userCode})
+	</insert>
+	
+	<delete id="delete" parameterType="RoleUser">
+		delete from CJF_ROLE_USER  
+		where roleCode=#{roleCode} and userCode=#{userCode}
+	</delete>
+
+</mapper>	

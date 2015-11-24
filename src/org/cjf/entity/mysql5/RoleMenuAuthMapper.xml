@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cjf.entity.mysql5.RoleMenuAuthMapper">
+	<select id="list" parameterType="RoleMenuAuth" resultType="RoleMenuAuth">
+		select m.id, m.menuCode, m.menuTitle, m.parentMenuCode, m.dispOrder,
+			ifnull(ra.canCreate, 0) canCreate, ifnull(ra.canRemove, 0) canRemove, ifnull(ra.canModify, 0) canModify, ifnull(ra.canQuery, 0) canQuery, 
+			ifnull(ra.canExport, 0) canExport, ifnull(ra.canImport, 0) canImport, 
+			ifnull(ra.canAttachmentCreate, 0) canAttachmentCreate, ifnull(ra.canAttachmentRemove, 0) canAttachmentRemove, 
+			ifnull(ra.canEnable, 0) canEnable, ifnull(ra.canDisable, 0) canDisable, 
+			ifnull(ra.canSpecial1, 0) canSpecial1, ifnull(ra.canSpecial2, 0) canSpecial2, ifnull(ra.canSpecial3, 0) canSpecial3
+		from CJF_MENU m
+		left join CJF_ROLE_AUTH ra
+		on m.menuCode = ra.resCode and ra.roleCode=#{roleCode} and ra.resTypeCode='menu'
+		order by m.dispOrder;
+	</select>
+	
+	<select id="count" parameterType="RoleMenuAuth" resultType="int">
+		select count(m.id)
+		from CJF_MENU m
+	</select>
+	
+	<insert id="add" parameterType="RoleMenuAuth" useGeneratedKeys="true" keyProperty="id">
+		insert into CJF_ROLE_AUTH 
+		(
+			roleCode, resTypeCode, resCode, 
+			canCreate, canRemove, canModify, canQuery, 
+			canExport, canImport, 
+			canAttachmentCreate, canAttachmentRemove, 
+			canEnable, canDisable, 
+			canSpecial1, canSpecial2, canSpecial3
+		)
+		values 
+		(
+			#{roleCode}, 'menu', #{menuCode}, 
+			#{canCreate}, #{canRemove}, #{canModify}, #{canQuery}, 
+			#{canExport}, #{canImport}, 
+			#{canAttachmentCreate}, #{canAttachmentRemove}, 
+			#{canEnable}, #{canDisable}, 
+			#{canSpecial1}, #{canSpecial2}, #{canSpecial3}
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="RoleMenuAuth">
+		delete from CJF_ROLE_AUTH  
+		where roleCode=#{roleCode} and resTypeCode='menu'
+	</delete>
+</mapper>

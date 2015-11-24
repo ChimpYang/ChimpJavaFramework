@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cjf.entity.mysql5.MenuMapper">
+	<!--
+ 	Author CJF Generator
+ 	Version 1.0
+	-->
+
+	<sql id="criteriaSql">
+		<where>
+			<if test="id != 0">
+				and a.id = #{id}
+			</if>
+			<if test="menuCode != null and menuCode != ''">
+				and a.menuCode like '${menuCode}%'
+			</if>
+			<if test="menuTitle != null and menuTitle != ''">
+				and a.menuTitle like '%${menuTitle}%'
+			</if>
+			<if test="menuAction != null and menuAction != ''">
+				and a.menuAction like '%${menuAction}%'
+			</if>
+			<if test="menuTypeCode != null and menuTypeCode != ''">
+				and a.menuTypeCode = #{menuTypeCode}
+			</if>
+			<if test="parentMenuCode != null and parentMenuCode != ''">
+				and a.parentMenuCode = #{parentMenuCode}
+			</if>
+			<if test="systemTypeCode != null and systemTypeCode != ''">
+				and a.systemTypeCode = #{systemTypeCode}
+			</if>
+			<if test="currentStatus != 0">
+				and a.currentStatus = #{currentStatus}
+			</if>
+		</where>
+		order by a.dispOrder
+	</sql>
+	
+	<sql id="lookupFieldSql">
+		select a.*, s.sysValueName from CJF_MENU a
+		left join CJF_SYSTYPE_VAL s on a.menuTypeCode = s.sysValueCode
+	</sql>
+	
+	<select id="list" parameterType="Menu" resultType="Menu">
+		<include refid="lookupFieldSql" />
+		<include refid="criteriaSql" />
+	</select>
+		
+	<select id="count" parameterType="Menu" resultType="int">
+		select count(id) from CJF_MENU a
+		<include refid="criteriaSql" />
+	</select>
+	
+	<select id="single" parameterType="Menu" resultType="Menu">
+		<include refid="lookupFieldSql" />
+		where a.id = #{id}
+	</select>	
+
+	<select id="countBiz" parameterType="Menu" resultType="int">
+		select count(id) from CJF_MENU
+		where menuCode = #{menuCode}
+	</select>
+
+	<select id="countModifyCheck" parameterType="Menu" resultType="int">
+		select count(id) from CJF_MENU
+		where menuCode = #{menuCode}
+		and id != #{id}
+	</select>
+	
+	<select id="singleByCode" parameterType="Menu" resultType="Menu">
+		select * from CJF_MENU
+		where menuCode = #{menuCode}
+	</select>
+	
+	<insert id="add" parameterType="Menu" useGeneratedKeys="true" keyProperty="id">
+		insert into CJF_MENU 
+		(menuCode, menuMemo, menuTitle, menuAction, menuTypeCode, dispOrder, parentMenuCode, systemTypeCode, currentStatus, menuIcon, nodeLeaf, menuContent)
+		values 
+		(#{menuCode}, #{menuMemo}, #{menuTitle}, #{menuAction}, #{menuTypeCode}, #{dispOrder}, #{parentMenuCode}, #{systemTypeCode}, #{currentStatus}, #{menuIcon}, #{nodeLeaf}, #{menuContent})
+	</insert>
+	
+	<sql id="criteriaUpdate">
+		update CJF_MENU 
+		<set>
+			<if test="menuMemo != null and menuMemo != ''">
+				menuMemo = #{menuMemo}, 			
+			</if>
+			<if test="menuTitle != null and menuTitle != ''">
+				menuTitle = #{menuTitle}, 			
+			</if>
+			<if test="menuAction != null and menuAction != ''">
+				menuAction = #{menuAction}, 			
+			</if>
+			<if test="menuTypeCode != null and menuTypeCode != ''">
+				menuTypeCode = #{menuTypeCode}, 			
+			</if>
+			<if test="menuContent != null">
+				menuContent = #{menuContent}			
+			</if>
+		</set>
+	</sql>
+
+	<update id="update" parameterType="Menu">
+		<include refid="criteriaUpdate" />
+		where id = #{id}
+	</update>
+	
+	<update id="updateByCode" parameterType="Menu">
+		<include refid="criteriaUpdate" />
+		where menuCode = #{menuCode}
+	</update>
+	
+	<delete id="delete" parameterType="Menu">
+		delete from CJF_MENU  
+		where id = #{id}
+	</delete>
+	
+	<delete id="deleteByCode" parameterType="Menu">
+		delete from CJF_MENU  
+		where menuCode = #{menuCode}
+	</delete>
+	
+	<delete id="clear">
+		delete from CJF_MENU 
+	</delete>
+	
+	<update id="updateCurrentStatus" parameterType="Menu">
+		update CJF_MENU 
+		set currentStatus = #{currentStatus} 
+		where id = #{id}
+	</update>
+	
+	<update id="updateMenuCode" parameterType="Menu">
+		update CJF_MENU 
+		set menuCode = #{menuCode} 
+		where id = #{id}
+	</update>
+	
+</mapper>	

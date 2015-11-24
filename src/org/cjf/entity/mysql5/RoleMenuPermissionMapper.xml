@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cjf.entity.mysql5.RoleMenuPermissionMapper">
+	<select id="menuNodeListByUser" parameterType="String" resultType="RoleMenuPermission">
+	select
+	m.*,
+	sum(a.cancreate) canCreate, sum(a.canRemove) canRemove, sum(a.canModify) canModify, sum(a.canQuery) canQuery,
+	sum(a.canImport) canImport, sum(a.canExport) canExport, 
+	sum(a.canAttachmentCreate) canAttachmentCreate, sum(a.canAttachmentRemove) canAttachmentRemove,
+	sum(a.canEnable) canEnable, sum(a.canDisable) canDisable,
+	sum(a.canSpecial1) canSpecial1, sum(a.canSpecial2) canSpecial2, sum(a.canSpecial3) canSpecial3
+	from
+	(
+		select * from CJF_ROLE_AUTH where roleCode 
+		in
+		(
+			select ru.roleCode from CJF_ROLE_USER ru
+			inner join CJF_ROLE r on ru.roleCode=r.roleCode and r.currentStatus=1
+			where ru.userCode=#{userCode}
+		) 
+		and resTypeCode='menu'
+	) as a
+	inner join CJF_MENU m
+	on a.resCode=m.menuCode
+	group by a.resCode
+	order by length(menuCode), dispOrder
+	</select>
+</mapper>	

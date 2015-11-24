@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cjf.entity.mysql5.SysTypeValueMapper">
+	<!--
+ 	Author CJF Generator
+ 	Version 1.0
+	-->
+
+	<sql id="criteriaSql">
+		<where>
+			<if test="id != 0">
+				and a.id = #{id}
+			</if>
+			<if test="sysTypeCode != null and sysTypeCode != ''">
+				and a.sysTypeCode = #{sysTypeCode}
+			</if>
+			<if test="sysValueCode != null and sysValueCode != ''">
+				and a.sysValueCode = #{sysValueCode}
+			</if>
+			<if test="sysValueName != null and sysValueName != ''">
+				and a.sysValueName like '%${sysValueName}%'
+			</if>
+			<if test="sysFlag != 0">
+				and a.sysFlag = #{sysFlag}
+			</if>
+			<if test="sysValue != null and sysValue != ''">
+				and a.sysValue like '%${sysValue}%'
+			</if>
+			<if test="sysValue2 != null and sysValue2 != ''">
+				and a.sysValue2 like '%${sysValue2}%'
+			</if>
+			<if test="sysValue3 != null and sysValue3 != ''">
+				and a.sysValue3 like '%${sysValue3}%'
+			</if>
+		</where>
+		order by a.id
+	</sql>
+	
+	<sql id="lookupFieldSql">
+		select a.*, s.sysTypeName from CJF_SYSTYPE_VAL a
+		left join CJF_SYSTYPE s on a.sysTypeCode = s.sysTypeCode
+	</sql>
+	
+	<select id="list" parameterType="SysTypeValue" resultType="SysTypeValue">
+		<include refid="lookupFieldSql" />
+		<include refid="criteriaSql" />
+	</select>
+		
+	<select id="count" parameterType="SysTypeValue" resultType="int">
+		select count(id) from CJF_SYSTYPE_VAL a
+		<include refid="criteriaSql" />
+	</select>
+	
+	<select id="single" parameterType="SysTypeValue" resultType="SysTypeValue">
+		<include refid="lookupFieldSql" />
+		where a.id = #{id}
+	</select>	
+
+	<select id="countBiz" parameterType="SysTypeValue" resultType="int">
+		select count(id) from CJF_SYSTYPE_VAL
+		where sysValueCode = #{sysValueCode}
+	</select>
+
+	<select id="countModifyCheck" parameterType="SysTypeValue" resultType="int">
+		select count(id) from CJF_SYSTYPE_VAL
+		where sysValueCode = #{sysValueCode}
+		and id != #{id}
+	</select>
+	
+	<select id="singleByCode" parameterType="SysTypeValue" resultType="SysTypeValue">
+		select * from CJF_SYSTYPE_VAL
+		where sysValueCode = #{sysValueCode}
+	</select>
+	
+	<insert id="add" parameterType="SysTypeValue" useGeneratedKeys="true" keyProperty="id">
+		insert into CJF_SYSTYPE_VAL 
+		(sysTypeCode, sysValueCode, sysValueName, sysFlag, sysValue, sysValue2, sysValue3)
+		values 
+		(#{sysTypeCode}, #{sysValueCode}, #{sysValueName}, #{sysFlag}, #{sysValue}, #{sysValue2}, #{sysValue3})
+	</insert>
+	
+	<sql id="criteriaUpdate">
+		update CJF_SYSTYPE_VAL 
+		<set>
+			<if test="sysValueCode != null and sysValueCode != ''">
+				sysValueCode = #{sysValueCode}, 			
+			</if>
+			<if test="sysValueName != null and sysValueName != ''">
+				sysValueName = #{sysValueName}, 			
+			</if>
+			<if test="sysValue != null and sysValue != ''">
+				sysValue = #{sysValue}, 			
+			</if>
+			<if test="sysValue2 != null and sysValue2 != ''">
+				sysValue2 = #{sysValue2}, 			
+			</if>
+			<if test="sysValue3 != null and sysValue3 != ''">
+				sysValue3 = #{sysValue3}			
+			</if>
+		</set>
+	</sql>
+
+	<update id="update" parameterType="SysTypeValue">
+		<include refid="criteriaUpdate" />
+		where id = #{id}
+	</update>
+	
+	<update id="updateByCode" parameterType="SysTypeValue">
+		<include refid="criteriaUpdate" />
+		where sysValueCode = #{sysValueCode}
+	</update>
+	
+	<delete id="delete" parameterType="SysTypeValue">
+		delete from CJF_SYSTYPE_VAL  
+		where id = #{id}
+	</delete>
+	
+	<delete id="deleteByCode" parameterType="SysTypeValue">
+		delete from CJF_SYSTYPE_VAL  
+		where sysValueCode = #{sysValueCode}
+	</delete>
+	
+	<delete id="clear">
+		delete from CJF_SYSTYPE_VAL 
+	</delete>
+	
+	<update id="updateSysFlag" parameterType="SysTypeValue">
+		update CJF_SYSTYPE_VAL 
+		set sysFlag = #{sysFlag} 
+		where id = #{id}
+	</update>
+	
+</mapper>	

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cjf.entity.mysql5.RoleMapper">
+
+	<sql id="criteriaSql">
+		from CJF_ROLE
+		<where>
+			<if test="id != 0">
+				and id = #{id}
+			</if>
+			<if test="roleCode != null and roleCode != ''">
+				and roleCode like '%${roleCode}%'
+			</if>
+			<if test="roleName != null and roleName != ''">
+				and roleName like '%${roleName}%'
+			</if>
+			<if test="currentStatus != 0">
+				and currentStatus = #{currentStatus}
+			</if>
+			<if test="maxUserNumber != 0">
+				and maxUserNumber = #{maxUserNumber}
+			</if>
+		</where>
+		order by id
+	</sql>
+	
+	<select id="list" parameterType="Role" resultType="Role">
+		select *
+		<include refid="criteriaSql" />
+	</select>
+		
+	<select id="count" parameterType="Role" resultType="int">
+		select count(id) 
+		<include refid="criteriaSql" />
+	</select>
+	
+	<select id="single" parameterType="Role" resultType="Role">
+		select * from CJF_ROLE
+		where id = #{id}
+	</select>	
+
+
+	<select id="countBiz" parameterType="Role" resultType="int">
+		select count(id) from CJF_ROLE
+		where roleCode = #{roleCode}
+	</select>
+
+	<select id="countModifyCheck" parameterType="Role" resultType="int">
+		select count(id) from CJF_ROLE
+		where roleCode = #{roleCode}
+		and id != #{id}
+	</select>
+	
+	<select id="singleByCode" parameterType="Role" resultType="Role">
+		select * from CJF_ROLE
+		where roleCode = #{roleCode}
+	</select>
+	
+	<insert id="add" parameterType="Role" useGeneratedKeys="true" keyProperty="id">
+		insert into CJF_ROLE 
+		(roleCode, roleName, roleDesc, currentStatus, maxUserNumber)
+		values 
+		(#{roleCode}, #{roleName}, #{roleDesc}, #{currentStatus}, #{maxUserNumber})
+	</insert>
+	
+	<sql id="criteriaUpdate">
+		update CJF_ROLE 
+		<set>
+			<if test="id != 0">
+				id = #{id}, 			
+			</if>
+			<if test="roleDesc != null">
+				roleDesc = #{roleDesc}, 			
+			</if>
+			<if test="roleName != null">
+				roleName = #{roleName}, 			
+			</if>
+			<if test="currentStatus != 0">
+				currentStatus = #{currentStatus}, 			
+			</if>
+			<if test="maxUserNumber != 0">
+				maxUserNumber = #{maxUserNumber}
+			</if>
+		</set>
+	</sql>
+
+	<update id="update" parameterType="Role">
+		<include refid="criteriaUpdate" />
+		where id = #{id}
+	</update>
+	
+	<update id="updateByCode" parameterType="Role">
+		<include refid="criteriaUpdate" />
+		where roleCode = #{roleCode}
+	</update>
+	
+	<delete id="delete" parameterType="Role">
+		delete from CJF_ROLE  
+		where id = #{id}
+	</delete>
+	
+	<delete id="deleteByCode" parameterType="Role">
+		delete from CJF_ROLE  
+		where roleCode = #{roleCode}
+	</delete>
+	
+	<delete id="clear">
+		delete from CJF_ROLE 
+	</delete>
+	
+	<update id="updateRoleCode" parameterType="Role">
+		update CJF_ROLE 
+		set roleCode = #{roleCode} 
+		where id = #{id}
+	</update>
+	
+	<update id="updateRoleDisabled" parameterType="Role">
+		update CJF_ROLE 
+		set roleDisabled = #{roleDisabled} 
+		where id = #{id}
+	</update>
+	
+	<update id="updateMaxUserNumber" parameterType="Role">
+		update CJF_ROLE 
+		set maxUserNumber = #{maxUserNumber} 
+		where id = #{id}
+	</update>
+	
+	<update id="updateCurrentStatus" parameterType="Role">
+		update CJF_ROLE 
+		set currentStatus = #{currentStatus} 
+		where id = #{id}
+	</update>
+	
+	<select id="CR_RoleUser" parameterType="Role" resultType="int">
+		select count(id) from CJF_ROLEUSER
+		where roleCode = #{roleCode}
+	</select>	
+	
+</mapper>	
